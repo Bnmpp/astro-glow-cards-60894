@@ -1,11 +1,75 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Rocket, Globe, Star, Sparkles, Moon, Sun } from "lucide-react";
+import { MotivationalCard } from "@/components/MotivationalCard";
+import spaceBackground from "@/assets/space-background.jpg";
+
+const motivationalQuotes = [
+  {
+    quote: "Keep going, you're orbiting success.",
+    icon: Rocket,
+  },
+  {
+    quote: "The universe has no limits, and neither do you.",
+    icon: Globe,
+  },
+  {
+    quote: "Every star was once darkness before it learned to shine.",
+    icon: Star,
+  },
+  {
+    quote: "Your dreams are the constellations guiding you forward.",
+    icon: Sparkles,
+  },
+  {
+    quote: "In the vastness of space, you are a brilliant spark.",
+    icon: Moon,
+  },
+  {
+    quote: "Launch beyond fear, land among the stars.",
+    icon: Sun,
+  },
+];
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div 
+      className="min-h-screen bg-background relative overflow-hidden"
+      style={{
+        backgroundImage: `url(${spaceBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}
+    >
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      
+      <div className="relative z-10 container mx-auto px-4 py-16">
+        <header className="text-center mb-16 space-y-4">
+          <div className="inline-block p-4 rounded-full bg-gradient-to-br from-primary to-secondary mb-4 glow-card animate-float">
+            <Rocket className="w-12 h-12 text-background" strokeWidth={2.5} />
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent text-glow">
+            AstroMate
+          </h1>
+          <p className="text-xl text-muted-foreground font-medium">
+            Daily motivation for space explorers
+          </p>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          {motivationalQuotes.map((item, index) => (
+            <div 
+              key={index} 
+              className="animate-fade-in"
+              style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'both' }}
+            >
+              <MotivationalCard quote={item.quote} icon={item.icon} />
+            </div>
+          ))}
+        </div>
+
+        <footer className="mt-20 text-center text-muted-foreground text-sm">
+          <p>Keep reaching for the stars, astronaut. 🚀</p>
+        </footer>
       </div>
     </div>
   );
