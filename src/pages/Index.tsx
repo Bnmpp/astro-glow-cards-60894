@@ -4,7 +4,7 @@ import spaceBackground from "@/assets/space-background.jpg";
 
 const motivationalQuotes = [
   {
-    quote: "Keep going, you're orbiting success.",
+    quote: "You're doing great, astronaut!",
     icon: Rocket,
   },
   {
