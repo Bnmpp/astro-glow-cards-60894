@@ -1,35 +1,11 @@
-import { Rocket, Globe, Star, Sparkles, Moon, Sun } from "lucide-react";
+import { Rocket } from "lucide-react";
 import { MotivationalCard } from "@/components/MotivationalCard";
 import spaceBackground from "@/assets/space-background.jpg";
-
-const motivationalQuotes = [
-  {
-    quote: "You're doing great, astronaut!",
-    icon: Rocket,
-  },
-  {
-    quote: "The universe has no limits, and neither do you.",
-    icon: Globe,
-  },
-  {
-    quote: "Every star was once darkness before it learned to shine.",
-    icon: Star,
-  },
-  {
-    quote: "Your dreams are the constellations guiding you forward.",
-    icon: Sparkles,
-  },
-  {
-    quote: "In the vastness of space, you are a brilliant spark.",
-    icon: Moon,
-  },
-  {
-    quote: "Launch beyond fear, land among the stars.",
-    icon: Sun,
-  },
-];
+import { useDailyQuotes } from "@/hooks/useDailyQuotes";
 
 const Index = () => {
+  const { quotes, isRefreshing } = useDailyQuotes();
+
   return (
     <div 
       className="min-h-screen bg-background relative overflow-hidden"
@@ -55,12 +31,12 @@ const Index = () => {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-          {motivationalQuotes.map((item, index) => (
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto transition-opacity duration-300 ${isRefreshing ? 'opacity-0' : 'opacity-100'}`}>
+          {quotes.map((item, index) => (
             <div 
               key={index} 
               className="animate-fade-in"
-              style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'both' }}
+              style={{ animationDelay: `${isRefreshing ? 0 : index * 0.1}s`, animationFillMode: 'both' }}
             >
               <MotivationalCard quote={item.quote} icon={item.icon} />
             </div>
