@@ -1,10 +1,16 @@
 import { Rocket } from "lucide-react";
 import { MotivationalCard } from "@/components/MotivationalCard";
+import { MotivationalPopup } from "@/components/MotivationalPopup";
 import spaceBackground from "@/assets/space-background.jpg";
 import { useDailyQuotes } from "@/hooks/useDailyQuotes";
+import { useMotivationalPopup } from "@/hooks/useMotivationalPopup";
 
 const Index = () => {
   const { quotes, isRefreshing } = useDailyQuotes();
+  const { isOpen, closePopup } = useMotivationalPopup({
+    focusTimerMinutes: 30,
+    idleTimerMinutes: 5,
+  });
 
   return (
     <div 
@@ -47,6 +53,8 @@ const Index = () => {
           <p>Keep reaching for the stars, astronaut. 🚀</p>
         </footer>
       </div>
+
+      <MotivationalPopup isOpen={isOpen} onClose={closePopup} quotes={quotes} />
     </div>
   );
 };
