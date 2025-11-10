@@ -1,13 +1,14 @@
 import { Rocket } from "lucide-react";
 import { MotivationalCard } from "@/components/MotivationalCard";
 import { MotivationalPopup } from "@/components/MotivationalPopup";
+import { Button } from "@/components/ui/button";
 import spaceBackground from "@/assets/space-background.jpg";
 import { useDailyQuotes } from "@/hooks/useDailyQuotes";
 import { useMotivationalPopup } from "@/hooks/useMotivationalPopup";
 
 const Index = () => {
   const { quotes, isRefreshing } = useDailyQuotes();
-  const { isOpen, closePopup } = useMotivationalPopup({
+  const { isOpen, triggerPopup, closePopup } = useMotivationalPopup({
     focusTimerMinutes: 30,
     idleTimerMinutes: 5,
   });
@@ -35,6 +36,14 @@ const Index = () => {
           <p className="text-xl text-muted-foreground font-medium">
             Daily motivation for space explorers
           </p>
+          <div className="pt-4">
+            <Button 
+              onClick={triggerPopup}
+              className="bg-gradient-to-r from-primary to-secondary text-background hover:opacity-90 rounded-full px-6 py-2 font-medium shadow-lg hover:shadow-primary/50 transition-all duration-300"
+            >
+              🚀 Test Motivational Popup
+            </Button>
+          </div>
         </header>
 
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto transition-opacity duration-300 ${isRefreshing ? 'opacity-0' : 'opacity-100'}`}>
