@@ -33,13 +33,13 @@ const allQuotes: Quote[] = [
   },
 ];
 
-const shuffleArray = <T,>(array: T[]): T[] => {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
+const shuffleIndices = (length: number): number[] => {
+  const indices = Array.from({ length }, (_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    [indices[i], indices[j]] = [indices[j], indices[i]];
   }
-  return shuffled;
+  return indices;
 };
 
 const getStartOfDay = (): string => {
@@ -54,20 +54,21 @@ export const useDailyQuotes = () => {
 
   useEffect(() => {
     const storedDay = localStorage.getItem('astromate_quotes_day');
-    const storedQuotes = localStorage.getItem('astromate_quotes');
+    const storedIndices = localStorage.getItem('astromate_quotes_indices');
     const currentDay = getStartOfDay();
 
     // Check if it's a new day or first visit
-    if (storedDay !== currentDay || !storedQuotes) {
+    if (storedDay !== currentDay || !storedIndices) {
       // New day - shuffle and refresh
       setIsRefreshing(true);
-      const shuffled = shuffleArray(allQuotes);
+      const shuffledIndices = shuffleIndices(allQuotes.length);
       
       // Delay to show animation
       setTimeout(() => {
-        setQuotes(shuffled);
+        const shuffledQuotes = shuffledIndices.map(index => allQuotes[index]);
+        setQuotes(shuffledQuotes);
         localStorage.setItem('astromate_quotes_day', currentDay);
-        localStorage.setItem('astromate_quotes', JSON.stringify(shuffled));
+        localStorage.setItem('astromate_quotes_indices', JSON.stringify(shuffledIndices));
         
         // Reset animation state after transition
         setTimeout(() => setIsRefreshing(false), 300);
@@ -75,8 +76,9 @@ export const useDailyQuotes = () => {
     } else {
       // Same day - load stored quotes
       try {
-        const parsed = JSON.parse(storedQuotes);
-        setQuotes(parsed);
+        const indices = JSON.parse(storedIndices);
+        const restoredQuotes = indices.map((index: number) => allQuotes[index]);
+        setQuotes(restoredQuotes);
       } catch {
         // If parsing fails, use default
         setQuotes(allQuotes);
