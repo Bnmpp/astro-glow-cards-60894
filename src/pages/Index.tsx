@@ -1,4 +1,5 @@
-import { Rocket } from "lucide-react";
+import { Rocket, Library } from "lucide-react";
+import { Link } from "react-router-dom";
 import { MotivationalCard } from "@/components/MotivationalCard";
 import { MotivationalPopup } from "@/components/MotivationalPopup";
 import { Button } from "@/components/ui/button";
@@ -36,13 +37,22 @@ const Index = () => {
           <p className="text-xl text-muted-foreground font-medium">
             Daily motivation for space explorers
           </p>
-          <div className="pt-4">
+          <div className="pt-4 flex flex-wrap gap-3 justify-center">
             <Button 
               onClick={triggerPopup}
               className="bg-gradient-to-r from-primary to-secondary text-background hover:opacity-90 rounded-full px-6 py-2 font-medium shadow-lg hover:shadow-primary/50 transition-all duration-300"
             >
               🚀 Test Motivational Popup
             </Button>
+            <Link to="/library">
+              <Button 
+                variant="outline"
+                className="border-primary/40 hover:border-primary/60 hover:bg-primary/10 rounded-full px-6 py-2 font-medium shadow-lg hover:shadow-primary/30 transition-all duration-300"
+              >
+                <Library className="w-4 h-4 mr-2" />
+                Explore Library
+              </Button>
+            </Link>
           </div>
         </header>
 
