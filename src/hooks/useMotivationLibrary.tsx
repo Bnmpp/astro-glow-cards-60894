@@ -8,6 +8,7 @@ export interface LibraryQuote {
   quote: string;
   icon: LucideIcon;
   category: QuoteCategory;
+  isCustom?: boolean;
 }
 
 export const allLibraryQuotes: LibraryQuote[] = [
@@ -114,10 +115,11 @@ export const allLibraryQuotes: LibraryQuote[] = [
 
 export const useMotivationLibrary = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [customQuotes, setCustomQuotes] = useState<LibraryQuote[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<QuoteCategory | 'All'>('All');
+  const [selectedCategory, setSelectedCategory] = useState<QuoteCategory | 'Favorites' | 'All'>('All');
 
-  // Load favorites from localStorage
+  // Load favorites and custom quotes from localStorage
   useEffect(() => {
     const storedFavorites = localStorage.getItem('astromate_favorites');
     if (storedFavorites) {
@@ -125,6 +127,19 @@ export const useMotivationLibrary = () => {
         setFavorites(JSON.parse(storedFavorites));
       } catch {
         setFavorites([]);
+      }
+    }
+
+    const storedCustomQuotes = localStorage.getItem('astromate_custom_quotes');
+    if (storedCustomQuotes) {
+      try {
+        const parsed = JSON.parse(storedCustomQuotes);
+        setCustomQuotes(parsed.map((q: any) => ({
+          ...q,
+          icon: getIconByName(q.iconName)
+        })));
+      } catch {
+        setCustomQuotes([]);
       }
     }
   }, []);
@@ -140,9 +155,56 @@ export const useMotivationLibrary = () => {
     });
   };
 
+  // Add custom quote
+  const addCustomQuote = (quote: string, category: QuoteCategory, iconName: string) => {
+    const newQuote: LibraryQuote = {
+      id: `custom-${Date.now()}`,
+      quote,
+      category,
+      icon: getIconByName(iconName),
+      isCustom: true,
+    };
+
+    const updatedQuotes = [...customQuotes, newQuote];
+    setCustomQuotes(updatedQuotes);
+    
+    // Save to localStorage (store iconName separately since functions can't be serialized)
+    const storableQuotes = updatedQuotes.map(q => ({
+      id: q.id,
+      quote: q.quote,
+      category: q.category,
+      iconName: getIconName(q.icon),
+      isCustom: q.isCustom,
+    }));
+    localStorage.setItem('astromate_custom_quotes', JSON.stringify(storableQuotes));
+  };
+
+  // Delete custom quote
+  const deleteQuote = (quoteId: string) => {
+    const updatedQuotes = customQuotes.filter(q => q.id !== quoteId);
+    setCustomQuotes(updatedQuotes);
+    
+    const storableQuotes = updatedQuotes.map(q => ({
+      id: q.id,
+      quote: q.quote,
+      category: q.category,
+      iconName: getIconName(q.icon),
+      isCustom: q.isCustom,
+    }));
+    localStorage.setItem('astromate_custom_quotes', JSON.stringify(storableQuotes));
+  };
+
+  // Combine all quotes
+  const allQuotes = [...allLibraryQuotes, ...customQuotes];
+
   // Filter quotes based on search and category
-  const filteredQuotes = allLibraryQuotes.filter((quote) => {
+  const filteredQuotes = allQuotes.filter((quote) => {
     const matchesSearch = quote.quote.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (selectedCategory === 'Favorites') {
+      return matchesSearch && favorites.includes(quote.id);
+    }
+    
     const matchesCategory = selectedCategory === 'All' || quote.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -151,9 +213,25 @@ export const useMotivationLibrary = () => {
     quotes: filteredQuotes,
     favorites,
     toggleFavorite,
+    addCustomQuote,
+    deleteQuote,
     searchQuery,
     setSearchQuery,
     selectedCategory,
     setSelectedCategory,
   };
+};
+
+// Helper functions to map icons
+const iconMap = {
+  Moon, Star, Sparkles, Rocket, Target, Brain, Trophy, Globe, Sun, Zap, Heart
+};
+
+const getIconByName = (name: string): LucideIcon => {
+  return iconMap[name as keyof typeof iconMap] || Star;
+};
+
+const getIconName = (icon: LucideIcon): string => {
+  const entry = Object.entries(iconMap).find(([_, value]) => value === icon);
+  return entry ? entry[0] : 'Star';
 };
